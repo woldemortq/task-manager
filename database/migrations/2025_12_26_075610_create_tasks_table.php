@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("status");
-            $table->string("comments");
-            $table->string("pinned_files");
-            $table->unsignedBigInteger("user_id");
-
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->enum('status', ['pending', 'completed', 'cancelled', 'in_progress'])->default('pending');
+            $table->foreignId('creator_id')->constrained('users');
+            $table->foreignId('assigned_to_id')->constrained('users');
             $table->softDeletes();
             $table->timestamps();
+            $table->index('status');
+            $table->index('creator_id');
+            $table->index('assigned_to_id');
         });
     }
 

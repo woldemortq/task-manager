@@ -13,15 +13,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string("role");
-            $table->string('username');
-            $table->string("email");
-            $table->string("password");
-            $table->string("task_id");
-            $table->bigInteger("telegram_chat_id");
-            $table->bigInteger("telegram_username");
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->enum('role', ['admin', 'user'])->default('user');
+            $table->bigInteger('telegram_chat_id')->nullable();
+            $table->string('telegram_username')->nullable();
+            $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
+            $table->index('email');
+            $table->index('role');
         });
     }
 
