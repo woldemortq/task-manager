@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Model
 {
     use softDeletes;
+    protected $table = 'users';
 
     //пока что в виде заглушки, позже переделаю для $fillable
     protected $guarded = [];
