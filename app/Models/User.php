@@ -14,6 +14,8 @@ class User extends Model
     protected $guarded = [];
     protected $hidden = ['password'];
 
+
+
     public function isAdmin(): bool
     {
         return $this->role === 'Admin';
