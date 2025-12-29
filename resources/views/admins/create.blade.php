@@ -10,7 +10,6 @@
 </head>
 <body>
 <div>
-    Это админ панель, вы вошли!
 </div>
 <div>
     <form action="{{ route('admin.create.users') }}" method="post">

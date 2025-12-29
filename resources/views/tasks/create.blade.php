@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-<form action="{{ route('users.tasks.create') }}" method="post">
+<form action="{{ route('users.tasks.create') }}" method="POST">
     @csrf
     <div class="container" >
         <div class="form-group mt-3">

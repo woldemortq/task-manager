@@ -1,9 +1,9 @@
 <?php
 
 
-// Вход в админку
 use App\Http\Controllers\UserController;
 
+// Вход в админку
 Route::get('/admin', [UserController::class, 'admin'])->name('users.admin');
 
 // Пост запрос, передаем данные для входа в админку
@@ -14,5 +14,3 @@ Route::get('/admin/create', [UserController::class, 'createUsers'])->name('admin
 
 //Передаем данные созданного пользователя в бд
 Route::post('/admin/create', [UserController::class, 'storeUsers'])->name('admin.store.users');
-
-Route::get('/admins', [UserController::class, 'index'])->name('admin.index');

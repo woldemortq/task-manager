@@ -10,8 +10,25 @@ class UserController extends Controller
 {
     public function index()
     {
+        return view('users.index');
+    }
+
+    public function users()
+    {
         $users = User::all();
-        dd($users);
+        return view('users.index', compact('users'));
+    }
+    public function userLogin(Request $request)
+    {
+        $name = request()->name;
+        $password = request()->password;
+
+        $user = User::where('name', $name)->where('password', $password)->where('role', 'user')->first();
+
+        if ($user) {
+            return redirect()->route('tasks.index');
+        }
+        return back()->with('error', 'Wrong username or password');
     }
 
     public function admin()
@@ -52,4 +69,6 @@ class UserController extends Controller
         User::create($usersAndAdmins);
         return redirect()->route('admin.index');
     }
+
+
 }

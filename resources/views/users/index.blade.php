@@ -66,20 +66,17 @@
 
 <div class="container">
     <div class="login-form">
-        <h3>Войти в панель</h3>
-        <form action="{{ route('users.admin.login') }}" method="POST">
+        <h3>Войти в панель задач</h3>
+        <form action="{{ route('users.login') }}" method="POST">
             @csrf
             <input type="text" name="name" placeholder="Логин или Email" required>
             <input type="password" name="password" placeholder="Пароль" required>
             <button type="submit">Войти</button>
         </form>
-        <form action="{{ route('admin.create.users') }}"  style="padding-top: 15px">
-            @csrf
-            <button type="submit" class="btn-admin">
-                Перейти в режим админа
-            </button>
-        </form>
+{{--        <form action="{{ route('users.tasks.store') }}"  style="padding-top: 15px">--}}
+{{--        </form>--}}
     </div>
+
 </div>
 
 </body>
