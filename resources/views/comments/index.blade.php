@@ -2,19 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <div class="container">
-        <h1 class="mb-4">Комментарии</h1>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <title>Комментарии</title>
 
-        @if($comments->isEmpty())
-            <div class="alert alert-secondary">
-                Комментариев пока нет
-            </div>
-        @else
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <h1 class="mb-4 text-center">Комментарии</h1>
+
+    @if($comments->isEmpty())
+        <div class="alert alert-secondary text-center">
+            Комментариев пока нет
+        </div>
+    @else
+        <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light">
                 <tr>
@@ -40,7 +48,7 @@
                             {{ $comment->user->name ?? 'Удалённый пользователь' }}
                         </td>
 
-                        <td style="max-width: 400px;">
+                        <td style="max-width: 400px; word-break: break-word;">
                             {{ $comment->content }}
                         </td>
 
@@ -51,9 +59,14 @@
                 @endforeach
                 </tbody>
             </table>
+        </div>
 
+        <div class="d-flex justify-content-center mt-4">
             {{ $comments->links() }}
-        @endif
-    </div>
+        </div>
+    @endif
+
+</div>
+
 </body>
 </html>
