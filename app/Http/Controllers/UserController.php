@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -20,12 +22,17 @@ class UserController extends Controller
     }
     public function userLogin(Request $request)
     {
-        $name = request()->name;
-        $password = request()->password;
+        $credentials = $request->validate([
+            'name' => 'required|string',
+            'password' => 'required|string'
+        ]);
 
-        $user = User::where('name', $name)->where('password', $password)->where('role', 'user')->first();
+        $user = User::where('name', $credentials['name'])
+            ->where('role', 'user')
+            ->first();
 
-        if ($user) {
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user);
             return redirect()->route('tasks.index');
         }
         return back()->with('error', 'Wrong username or password');
@@ -57,18 +64,24 @@ class UserController extends Controller
         return view('admins.create', compact('users', 'roles'));
     }
 
-    public function storeUsers()
+    public function storeUsers(Request $request)
     {
-        $usersAndAdmins = request()->validate([
-            'name' => 'string',
-            'email' => 'string',
-            'password' => 'string',
-            'role' => 'string|in:Admin,User'
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'role' => 'required|in:Admin,User'
         ]);
 
-        User::create($usersAndAdmins);
-        return redirect()->route('admin.index');
-    }
+        $data['password'] = Hash::make($data['password']);
 
+        User::create($data);
+
+        return redirect()
+            ->route('admin.create.users')
+            ->with('success', 'Пользователь успешно создан')
+            ->with('user_name', $data['name'])
+            ->with('user_email', $data['email']);
+    }
 
 }

@@ -1,80 +1,70 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .login-form {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-            width: 300px;
-        }
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .login-form button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .login-form button:hover {
-            background-color: #45a049;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
-</head>
-<body>
+          content="width=device-width, initial-scale=1">
+    <title>Вход в панель задач</title>
 
-<div class="container">
-    <div class="login-form">
-        <h3>Войти в панель задач</h3>
-        <form action="{{ route('users.login') }}" method="POST">
-            @csrf
-            <input type="text" name="name" placeholder="Логин или Email" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
-        </form>
-{{--        <form action="{{ route('users.tasks.store') }}"  style="padding-top: 15px">--}}
-{{--        </form>--}}
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Войти в панель задач</h4>
+                </div>
+
+                <div class="card-body">
+                    <form action="{{ route('users.login') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Логин или Email</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                                placeholder="Введите логин или email"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Введите пароль"
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Войти
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            @if(session('error'))
+                <div class="alert alert-danger mt-3 text-center">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+        </div>
     </div>
 
 </div>

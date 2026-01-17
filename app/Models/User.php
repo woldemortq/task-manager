@@ -1,18 +1,30 @@
 <?php
 
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Model
+class User extends Authenticatable
 {
     use softDeletes;
     protected $table = 'users';
 
-    //пока что в виде заглушки, позже переделаю для $fillable
-    protected $guarded = [];
-    protected $hidden = ['password'];
+    use Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'telegram_chat_id',
+        'telegram_username',
+        'telegram_auth_code',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
 
 
