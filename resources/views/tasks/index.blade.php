@@ -18,8 +18,16 @@
 
     <h1 class="mb-4 text-center">Главная страница для пользователей</h1>
     <p class="text-center mb-5">Создание и просмотр заявок</p>
+    <a href="https://t.me/task_trackerManager_bot?start=ABC123"
+       class="btn btn-telegram d-inline-flex align-items-center gap-2 mb-3"
+       target="_blank"
+       style="background-color: #1DA1F2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem;">
+        <i class="bi bi-telegram"></i>
+        Подключить Telegram
+    </a>
 
-    @forelse($tasks as $task)
+
+@forelse($tasks as $task)
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
                 <strong>{{ $task->id }}. {{ $task->title }}</strong>

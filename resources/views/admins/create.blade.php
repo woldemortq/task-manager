@@ -18,8 +18,32 @@
 
     <h1 class="mb-4 text-center">Админ: Управление пользователями</h1>
 
+    @if(session('success'))
+        <div class="alert alert-success text-center">
+            <h5 class="mb-2">{{ session('success') }}</h5>
+
+            <p class="mb-1">
+                <strong>Имя:</strong> {{ session('user_name') }}
+            </p>
+
+            <p class="mb-0">
+                <strong>Email:</strong> {{ session('user_email') }}
+            </p>
+        </div>
+    @endif
+
+
     <div class="row justify-content-center mb-5">
         <div class="col-md-6">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             {{-- Форма создания пользователя --}}
             <div class="card shadow-sm">

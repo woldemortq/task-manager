@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Task;
+use App\Service\TelegramService;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -23,7 +25,7 @@ class TaskController extends Controller
         return view('tasks.create', compact('tasks', 'status'));
     }
 
-    public function storeTask()
+    public function storeTask(Request $request)
     {
         $tasks = Task::all();
         $status = Status::cases();
@@ -34,8 +36,29 @@ class TaskController extends Controller
             'assigned_to_id' => 'integer|exists:users,id',
             'creator_id' => 'integer|exists:users,id'
         ]);
+        TelegramService::notify(
+            $task->assignedUser->telegram_chat_id,
+            "🆕 Новая задача:\n{$task->title}"
+        );
+
 
         Task::create($task);
         return view('tasks.create', compact('tasks', 'status'));
     }
+    public function update(Request $request, Task $task)
+    {
+        $oldStatus = $task->status;
+
+        $task->update($request->only('status', 'title', 'description'));
+
+        if ($request->has('status') && $oldStatus !== $task->status) {
+            TelegramService::notify(
+                $task->assignedUser->telegram_chat_id,
+                "🔄 Статус задачи изменён:\n{$task->title}\nСтатус: {$task->status}"
+            );
+        }
+
+        return response()->json($task);
+    }
+
 }

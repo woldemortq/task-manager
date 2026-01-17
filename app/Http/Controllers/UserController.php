@@ -66,16 +66,22 @@ class UserController extends Controller
 
     public function storeUsers(Request $request)
     {
-        $usersAndAdmins = request()->validate([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'string|in:Admin,User'
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'role' => 'required|in:Admin,User'
         ]);
 
-        User::create($usersAndAdmins);
-        return redirect()->route('admin.index');
-    }
+        $data['password'] = Hash::make($data['password']);
 
+        User::create($data);
+
+        return redirect()
+            ->route('admin.create.users')
+            ->with('success', 'Пользователь успешно создан')
+            ->with('user_name', $data['name'])
+            ->with('user_email', $data['email']);
+    }
 
 }
