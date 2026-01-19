@@ -57,13 +57,6 @@
                         <button type="submit" class="btn btn-primary w-100">Войти</button>
                     </form>
 
-                    {{-- Кнопка перехода в режим админа --}}
-                    <form action="{{ route('admin.create.users') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary w-100 mt-2">
-                            Перейти в режим админа
-                        </button>
-                    </form>
 
                     {{-- Flash-сообщение об ошибке --}}
                     @if(session('error'))

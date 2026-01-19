@@ -9,14 +9,23 @@ class Task extends Model
 {
     use softDeletes;
 
-    //пока что в виде заглушки, позже переделаю для $fillable
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'description',
+        'status',
+        'assigned_to_id',
+        'creator_id',
+    ];
     protected $table = 'tasks';
 
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_by');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
     public function task()
