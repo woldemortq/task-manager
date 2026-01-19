@@ -2,26 +2,27 @@
 namespace App\Http\Controllers;
 
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class TelegramAuthController extends Controller
 {
-    public function generate()
+    public function generate(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
 
-        $code = strtoupper(Str::random(6));
+        // Генерируем уникальный код
+        $code = Str::upper(Str::random(6));
+        $user->telegram_auth_code = $code;
+        $user->save();
 
-        $user->update([
-            'telegram_auth_code' => $code,
-        ]);
-
-
-
-        return response()->json([
-            'url' => "https://t.me/task_trackerManager_bot?start={$code}",
-        ]);
+        return response()->json(['code' => $code]);
     }
+
 }
 

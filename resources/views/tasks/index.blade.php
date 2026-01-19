@@ -15,9 +15,8 @@
 <body class="bg-light">
 
 <div class="container py-5">
-
     <h1 class="mb-4 text-center">Главная страница для пользователей</h1>
-    <p class="text-center mb-5">Создание и просмотр заявок</p>
+
     <a href="https://t.me/task_trackerManager_bot?start=ABC123"
        class="btn btn-telegram d-inline-flex align-items-center gap-2 mb-3"
        target="_blank"
@@ -25,6 +24,41 @@
         <i class="bi bi-telegram"></i>
         Подключить Telegram
     </a>
+    <script>
+        document.querySelector('.btn-telegram').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            fetch("{{ route('telegram.generate') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.code){
+                        alert('Ваш код для авторизации в Telegram: ' + data.code);
+                        // Перенаправляем на бота
+                        window.open('https://t.me/task_trackerManager_bot?start=' + data.code, '_blank');
+                    } else {
+                        alert('Ошибка при генерации кода');
+                    }
+                });
+        });
+    </script>
+
+    <p class="text-center mb-5">Создание и просмотр заявок</p>
+    <a href="{{route('users.tasks.create')}} "
+       class="btn btn-telegram d-inline-flex align-items-center gap-2 mb-3"
+       target="_blank"
+       style="background-color: #1DA1F2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem;">
+        <i class="bi bi-telegram"></i>
+        Создать заявку
+    </a>
+
+
+
 
 
 @forelse($tasks as $task)

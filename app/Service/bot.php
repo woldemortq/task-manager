@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Telegram\Bot\Api;
 use App\Models\User;
 
-class TelegramPoll extends Command
+class TelegramBotPoll extends Command
 {
     protected $signature = 'telegram:poll';
     protected $description = 'Запуск бота через polling';

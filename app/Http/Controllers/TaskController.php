@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Task;
+use App\Models\User;
 use App\Service\TelegramService;
 use Illuminate\Http\Request;
 
@@ -29,20 +30,23 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
         $status = Status::cases();
-        $task = request()->validate([
-            'title' => 'string',
-            'description' => 'string',
-            'status' => 'string|in:pending,completed,cancelled,in_progress',
-            'assigned_to_id' => 'integer|exists:users,id',
-            'creator_id' => 'integer|exists:users,id'
+        $data = $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,completed,cancelled,in_progress',
+            'assigned_to_id' => 'required|exists:users,id',
+            'creator_id' => 'required|exists:users,id',
         ]);
-        TelegramService::notify(
-            $task->assignedUser->telegram_chat_id,
-            "🆕 Новая задача:\n{$task->title}"
-        );
 
+        $task = Task::create($data);
+        $assignedUser = User::find($task->assigned_to_id);
 
-        Task::create($task);
+        if ($assignedUser && $assignedUser->telegram_chat_id) {
+            TelegramService::notify(
+                $assignedUser->telegram_chat_id,
+                "🆕 Новая задача:\n{$task->title}"
+            );
+        }
         return view('tasks.create', compact('tasks', 'status'));
     }
     public function update(Request $request, Task $task)
