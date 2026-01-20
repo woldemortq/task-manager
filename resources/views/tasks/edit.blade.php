@@ -19,7 +19,7 @@
 
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Edit task</h5>
+                    <h5 class="mb-0">Редактирование задачи</h5>
                 </div>
 
                 <div class="card-body">
@@ -31,17 +31,18 @@
                         @method('PATCH')
 
                         <div class="mb-3">
-                            <label class="form-label">Title</label>
+                            <label class="form-label">Название</label>
                             <input
                                 name="title"
                                 type="text"
                                 class="form-control"
                                 value="{{ old('title', $task->title) }}"
+                                required
                             >
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
+                            <label class="form-label">Описание</label>
                             <input
                                 name="description"
                                 type="text"
@@ -51,39 +52,52 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <select
-                                name="status"
-                                class="form-select"
-                            >
-                                @foreach($status as $value)
+                            <label class="form-label">Статус</label>
+                            <select name="status" class="form-select" required>
+                                @foreach($status as $item)
                                     <option
-                                        value="{{ $value }}"
-                                        @selected($task->status === $value)
+                                        value="{{ $item->value }}"
+                                        @selected(old('status', $task->status) === $item->value)
                                     >
-                                        {{ $value }}
+                                        {{ $item->label() }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Assigned to ID</label>
-                            <input
+                            <label class="form-label">Исполнитель</label>
+                            <select
                                 name="assigned_to_id"
-                                type="number"
-                                class="form-control"
-                                value="{{ old('assigned_to_id', $task->assigned_to_id) }}"
+                                class="form-select"
+                                required
                             >
+                                <option value="">— Выберите исполнителя —</option>
+
+                                @foreach($users as $user)
+                                    <option
+                                        value="{{ $user->id }}"
+                                        @selected(
+                                            old('assigned_to_id', $task->assigned_to_id) == $user->id
+                                        )
+                                    >
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">
-                            Update task
+                            Обновить задачу
                         </button>
                     </form>
                 </div>
             </div>
-
+            <div class="text-center mt-4">
+                <a href="{{ route('tasks.index') }}" class="btn btn-outline-primary">
+                    ← Вернуться к задачам
+                </a>
+            </div>
             @if(session('success'))
                 <div class="alert alert-success mt-3 text-center">
                     {{ session('success') }}
