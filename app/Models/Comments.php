@@ -9,8 +9,11 @@ class Comments extends Model
 {
     use HasFactory;
 
-    //пока что в виде заглушки, позже переделаю для $fillable
-    protected $guarded = [];
+    protected $fillable = [
+        'task_id',
+        'user_id',
+        'content',
+    ];
 
     public function user()
     {

@@ -13,8 +13,10 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::all();
-        return view('tasks.index', compact('tasks'));
+        $tasks = Task::with(['comments.user'])->latest()->get();
+        $status = Status::cases();
+
+        return view('tasks.index', compact('tasks', 'status'));
     }
 
 
@@ -22,39 +24,54 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
         $status = Status::cases();
+        $users = User::all();
 
-        return view('tasks.create', compact('tasks', 'status'));
+        return view('tasks.create', compact('tasks', 'status', 'users'));
     }
 
     public function storeTask(Request $request)
     {
         $tasks = Task::all();
         $status = Status::cases();
+        $users = User::all();
+
         $data = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'status' => 'required|in:pending,completed,cancelled,in_progress',
+            'status' => 'required|in:pending,in_progress,completed,cancelled',
             'assigned_to_id' => 'required|exists:users,id',
             'creator_id' => 'required|exists:users,id',
         ]);
 
         $task = Task::create($data);
+
         $assignedUser = $task->assignedUser;
 
         if ($assignedUser && $assignedUser->telegram_chat_id) {
             TelegramService::notify(
                 $assignedUser->telegram_chat_id,
-                "🆕 Новая задача:\n{$task->title} \n Описание: {$task->description} \n Статус: {$task->status}"
+                "🆕 Новая задача: \n({$task->id}){$task->title}\nОписание: {$task->description}\nСтатус: {$task->status}"
             );
         }
-        return view('tasks.create', compact('tasks', 'status'));
+
+        return redirect()->route('tasks.index')->with('success', 'Задача успешно создана!');
+    }
+    public function editTask(Task $task)
+    {
+        $status = Status::cases();
+        $users = User::all();
+
+        return view('tasks.edit', [
+            'task' => $task,
+            'status' => $status,
+        ], compact('users', 'task', 'status'));
     }
     public function update(Request $request, Task $task)
     {
         $data = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'status' => 'required|in:pending,completed,cancelled,in_progress',
+            'status' => 'required|in:pending,in_progress,completed,cancelled',
             'assigned_to_id' => 'required|exists:users,id',
         ]);
 
@@ -68,7 +85,7 @@ class TaskController extends Controller
         if ($assignedUser && $assignedUser->telegram_chat_id && $oldStatus !== $task->status) {
             TelegramService::notify(
                 $assignedUser->telegram_chat_id,
-                "🔄 Статус задачи изменён:\n{$task->title}\nНовый статус: {$task->status}"
+                "🔄 Статус задачи изменён:\n({$task->id}){$task->title}\nНовый статус: {$task->status}"
             );
         }
 
@@ -76,21 +93,13 @@ class TaskController extends Controller
             ->route('users.tasks.edit', $task)
             ->with('success', 'Task updated successfully');
     }
-
-    public function editTask(Task $task)
+    public function destroy(Task $task)
     {
-        $status = [
-            'pending',
-            'in_progress',
-            'completed',
-            'cancelled',
-        ];
+        $task->delete();
 
-        return view('tasks.edit', [
-            'task' => $task,
-            'status' => $status,
-        ]);
+        return redirect()
+            ->back()
+            ->with('success', 'Задача удалена');
     }
-
 
 }

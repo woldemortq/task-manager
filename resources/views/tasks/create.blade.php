@@ -19,10 +19,9 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            {{-- Form card --}}
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Create task</h5>
+                    <h5 class="mb-0">Создание задачи</h5>
                 </div>
 
                 <div class="card-body">
@@ -30,98 +29,85 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
+                            <label for="title" class="form-label">Название</label>
                             <input
                                 name="title"
                                 type="text"
                                 class="form-control"
                                 id="title"
-                                placeholder="Enter title"
+                                placeholder="Введите название задачи"
                             >
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Описание</label>
                             <input
                                 name="description"
                                 type="text"
                                 class="form-control"
                                 id="description"
-                                placeholder="Enter description"
+                                placeholder="Введите описание задачи"
                             >
                         </div>
 
                         <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select
-                                class="form-select"
-                                id="status"
-                                name="status"
-                            >
-                                @foreach($status as $value)
-                                    <option value="{{ $value }}">{{ $value }}</option>
+                            <label for="status" class="form-label">Статус</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">— Выберите статус —</option>
+
+                                @foreach($status as $item)
+                                    <option value="{{ $item->value }}">
+                                        {{ $item->label() }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="creator_id" class="form-label">Creator ID</label>
-                            <input
-                                name="creator_id"
-                                type="number"
-                                class="form-control"
-                                id="creator_id"
-                                placeholder="Enter creator id"
-                            >
-                        </div>
 
                         <div class="mb-3">
-                            <label for="assigned_to_id" class="form-label">Assigned to ID</label>
-                            <input
-                                name="assigned_to_id"
-                                type="number"
-                                class="form-control"
-                                id="assigned_to_id"
-                                placeholder="Enter assigned user id"
+                            <label for="creator_id" class="form-label">Создал задачу</label>
+                            <select
+                                name="creator_id"
+                                id="creator_id"
+                                class="form-select"
+                                required
                             >
+                                <option value="">— Выберите создателя —</option>
+
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+
+
+                        <div class="mb-3">
+                            <label for="assigned_to_id" class="form-label">Исполнитель</label>
+                            <select
+                                name="assigned_to_id"
+                                id="assigned_to_id"
+                                class="form-select"
+                                required
+                            >
+                                <option value="">— Выберите исполнителя —</option>
+
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
 
                         <button type="submit" class="btn btn-primary w-100">
-                            Create task
+                            Создать задачу
                         </button>
                     </form>
                 </div>
             </div>
-
-            {{-- Tasks list --}}
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">Tasks</h5>
-                </div>
-
-                <ul class="list-group list-group-flush">
-                    @forelse($tasks as $task)
-                        <li class="list-group-item">
-                            <strong>{{ $task->title }}</strong>
-                            <div class="text-muted small">
-                                <a
-                                    href="{{ route('users.tasks.edit', $task) }}"
-                                    class="btn btn-sm btn-outline-primary"
-                                >
-                                    Edit
-                                </a>
-
-                                {{ $task->description }}
-                            </div>
-                        </li>
-                    @empty
-                        <li class="list-group-item text-muted">
-                            No tasks yet
-                        </li>
-                    @endforelse
-                </ul>
-            </div>
-
         </div>
     </div>
 
