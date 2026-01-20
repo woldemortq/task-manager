@@ -104,6 +104,13 @@
                         <li class="list-group-item">
                             <strong>{{ $task->title }}</strong>
                             <div class="text-muted small">
+                                <a
+                                    href="{{ route('users.tasks.edit', $task) }}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    Edit
+                                </a>
+
                                 {{ $task->description }}
                             </div>
                         </li>

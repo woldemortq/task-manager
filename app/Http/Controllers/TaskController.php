@@ -39,30 +39,58 @@ class TaskController extends Controller
         ]);
 
         $task = Task::create($data);
-        $assignedUser = User::find($task->assigned_to_id);
+        $assignedUser = $task->assignedUser;
 
         if ($assignedUser && $assignedUser->telegram_chat_id) {
             TelegramService::notify(
                 $assignedUser->telegram_chat_id,
-                "🆕 Новая задача:\n{$task->title}"
+                "🆕 Новая задача:\n{$task->title} \n Описание: {$task->description} \n Статус: {$task->status}"
             );
         }
         return view('tasks.create', compact('tasks', 'status'));
     }
     public function update(Request $request, Task $task)
     {
+        $data = $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,completed,cancelled,in_progress',
+            'assigned_to_id' => 'required|exists:users,id',
+        ]);
+
         $oldStatus = $task->status;
 
-        $task->update($request->only('status', 'title', 'description'));
+        $task->update($data);
+        $task->refresh();
 
-        if ($request->has('status') && $oldStatus !== $task->status) {
+        $assignedUser = $task->assignedUser;
+
+        if ($assignedUser && $assignedUser->telegram_chat_id && $oldStatus !== $task->status) {
             TelegramService::notify(
-                $task->assignedUser->telegram_chat_id,
-                "🔄 Статус задачи изменён:\n{$task->title}\nСтатус: {$task->status}"
+                $assignedUser->telegram_chat_id,
+                "🔄 Статус задачи изменён:\n{$task->title}\nНовый статус: {$task->status}"
             );
         }
 
-        return response()->json($task);
+        return redirect()
+            ->route('users.tasks.edit', $task)
+            ->with('success', 'Task updated successfully');
     }
+
+    public function editTask(Task $task)
+    {
+        $status = [
+            'pending',
+            'in_progress',
+            'completed',
+            'cancelled',
+        ];
+
+        return view('tasks.edit', [
+            'task' => $task,
+            'status' => $status,
+        ]);
+    }
+
 
 }
