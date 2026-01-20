@@ -37,7 +37,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.code){
+                    if (data.code) {
                         alert('Ваш код для авторизации в Telegram: ' + data.code);
                         // Перенаправляем на бота
                         window.open('https://t.me/task_trackerManager_bot?start=' + data.code, '_blank');
@@ -58,14 +58,21 @@
     </a>
 
 
-
-
-
-@forelse($tasks as $task)
+    @forelse($tasks as $task)
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
                 <strong>{{ $task->id }}. {{ $task->title }}</strong>
-                <span class="badge bg-secondary float-end">{{ $task->status }}</span>
+
+                <span class="badge bg-secondary float-end">
+                    <a
+                        href="{{ route('users.tasks.edit', $task) }}"
+                        class="btn btn-sm btn-outline-primary"
+                        style="background-color: #f8d7da; color: #842029; border-color: #f5c2c7;"
+                    >
+    Edit
+</a>
+
+{{ $task->status }}</span>
             </div>
 
             <div class="card-body">
@@ -75,17 +82,21 @@
                     <hr>
                     <h6>Комментарии:</h6>
                     @foreach($task->comments as $comment)
+
                         <div class="border rounded p-2 mb-2 bg-light">
                             <strong>{{ $comment->user->name }}</strong>
                             <p class="mb-0">Коммент к задаче <strong>{{ $task->title }}:</strong> <br>
                                 {{ $comment->content }}</p>
                         </div>
+
                     @endforeach
                 @else
                     <p class="text-muted">Комментариев пока нет</p>
                 @endif
             </div>
+
         </div>
+
     @empty
         <p class="text-center text-muted">Нет задач</p>
     @endforelse
